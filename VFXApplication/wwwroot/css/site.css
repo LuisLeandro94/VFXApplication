@@ -1,0 +1,58 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.table-specs {
+    border-color: #dddddd;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.table-bordered > :not(caption) > * {
+    border-top: none;
+}
+
+    .table-bordered > :not(caption) > * > * {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+.table > thead > tr > th:not(:first-of-type, :last-of-type) {
+    border-right: 1px solid #dddddd;
+    border-left: 1px solid #dddddd;
+}
+
+.table > tbody > tr > td:not(:first-of-type, :last-of-type) {
+    border-right: 1px solid #dddddd;
+    border-left: 1px solid #dddddd;
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+    .form-select:focus {
+        border-color: #183C69;
+        box-shadow: 0 0 0 0.25rem rgba(24,60,105,.25);
+    }
