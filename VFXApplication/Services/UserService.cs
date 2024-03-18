@@ -1,4 +1,5 @@
-﻿using VFXApplication.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using VFXApplication.Models;
 using VFXFinancial.Models;
 
 namespace VFXApplication.Services
@@ -6,6 +7,7 @@ namespace VFXApplication.Services
     public interface IUserService
     {
         bool ValidateCredentials(string clientId, string userId, string password);
+        Task<AccountModel?> ValidateUserAsync(ApiContext context, string clientId, string userId, string password);
     }
     public class UserService : IUserService
     {
@@ -30,6 +32,15 @@ namespace VFXApplication.Services
             context.Accounts.Add(testAccount);
 
             context.SaveChanges();
+        }
+
+        public async Task<AccountModel?> ValidateUserAsync(ApiContext context, string clientId, string userId, string password)
+        {
+            return await context.Accounts.Where(
+                x => x.ClientID == clientId &&
+                x.UserID == userId &&
+                x.Password == password)
+                .FirstOrDefaultAsync();
         }
     }
 }

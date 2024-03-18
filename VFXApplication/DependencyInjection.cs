@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using VFXApplication.Models;
 using VFXApplication.Services;
 using VFXFinancial.Services;
@@ -18,15 +18,18 @@ namespace VFXApplication
             services.AddHttpContextAccessor();
 
             services.AddDbContext<ApiContext>(options =>
-            options.UseInMemoryDatabase("VFXApplication"));
+                options.UseInMemoryDatabase("VFXApplication"));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/User";
-                });
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = "/User/Login";
+                    });
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews()
+                    .AddRazorRuntimeCompilation();
+
+            services.AddMvc();
 
             return services;
         }

@@ -13,6 +13,7 @@ namespace VFXFinancial.Controllers
         {
             _forexRequestService = forexRequestService;
         }
+
         public IActionResult Index()
         {
             return View();

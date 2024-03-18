@@ -12,9 +12,12 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm  border-bottom box-shadow mb-3" style="background-color: #183c69">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <object style="width: 100px" type="image/svg+xml" data="~/logo-white.svg"></object>
+                <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">
+                    <object style="width: 100px; pointer-events: none;" type="image/svg+xml" data="~/logo-white.svg"></object>
                 </a>
+                <form id="logoutForm" asp-controller="User" asp-action="Logout" method="post">
+                    <button type="submit" style="background-color: transparent; border: none; color: white;">Logout</button>
+                </form>
             </div>
         </nav>
     </header>

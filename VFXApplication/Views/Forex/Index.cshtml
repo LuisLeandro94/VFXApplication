@@ -1,13 +1,16 @@
 ﻿@{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Forex";
 }
 
-<section class="container pt-5 bg-white">
+<div id="loadingSection">
+    <div class="spinner-border m-auto" role="status" aria-hidden="true"></div>
+</div>
+<section class="container pt-5 bg-white" style="display: none;" id="tableSection">
     <div class="container mb-5">
         <div class="flex-row d-flex">
-            <div class="flex-column me-4">
+            <div class="flex-column me-4" id="lastRefreshedOn">
                 <h3 style="color: #193d69;" class="m-0">Forex Daily Prices</h3>
-                <p class="small m-0">Last refresh: 2024-02-01 11:20</p>
+                
             </div>
             <div class="flex-row d-flex">
                 <select onchange="GetForexDailyPrices()" class="form-select mx-2 rounded-0" id="from_symbol" aria-label="Currency From">
@@ -15,7 +18,7 @@
                     <option value="GBP">GBP</option>
                     <option value="USD">USD</option>
                 </select>
-                <select class="form-select mx-2 rounded-0" id="to_symbol" aria-label="Currency To">
+                <select onchange="GetForexDailyPrices()" class="form-select mx-2 rounded-0" id="to_symbol" aria-label="Currency To">
                     <option value="EUR">EUR</option>
                     <option selected value="GBP">GBP</option>
                     <option value="USD">USD</option>
@@ -44,6 +47,9 @@
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script lang="en" type="text/javascript">
+    window.onload = function () {
+        GetForexDailyPrices();
+    }
     function GetForexDailyPrices() {
         var from_symbol = document.querySelector('#from_symbol').value;
         var to_symbol = document.querySelector('#to_symbol').value;
@@ -51,30 +57,42 @@
             "from_symbol": from_symbol,
             "to_symbol": to_symbol
         };
-        console.log(getDailyPricesParams);
         $.ajax({
             type: "GET",
             data: getDailyPricesParams,
-            url: "Forex/GetDailyPrices",
+            url: "@Url.Action("GetDailyPrices", "Forex")",
             success: function (response) {
                 console.log(response);
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('tableSection').style.display = 'block';
                 // Validate response data
-                if (response && response["Time Series FX (Daily)"]) {
+                if (response && response.dailyPrices && response.lastRefreshed) {
+                    var lastRefreshedContainer = $('#lastRefreshedOn');
+                    var lastRefreshed = $('<p class="small m-0">');
+                    lastRefreshed.empty();
+                    lastRefreshed.text(response.lastRefreshed);
+                    lastRefreshedContainer.append(lastRefreshed);
+
                     var tableBody = $('#dailyPricesTable tbody');
                     // Clear any existing rows
                     tableBody.empty();
 
-                    $.each(response["Time Series FX (Daily)"], function (date, price) {
+                    $.each(response.dailyPrices, function (date, price) {
                         var row = $('<tr>')
-                        row.append($('<td>').text(date));
-                        row.append($('<td>').text(price["1. open"]));
-                        row.append($('<td>').text(price["2. high"]));
-                        row.append($('<td>').text(price["3. low"]));
-                        row.append($('<td>').text(price["4. close"]));
+                        row.append($('<td>').text(price.date));
+                        row.append($('<td>').text(price.open));
+                        row.append($('<td>').text(price.high));
+                        row.append($('<td>').text(price.low));
+                        row.append($('<td>').text(price.close));
                         tableBody.append(row);
                     });
                 } else {
-                    console.error("No data found.");
+                    var tableBody = $('#tableSection');
+                    tableBody.empty();
+
+                    var maximumReached = $('<h2 style="color: #ffcc00">');
+                    maximumReached.text(response);
+                    tableBody.append(maximumReached);
                 }
             },
             error: function (xhr, status, error) {

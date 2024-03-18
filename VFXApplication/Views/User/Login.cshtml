@@ -1,7 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Account";
-
-    bool ShowError = false;
 }
 
 <section class="h-100">
@@ -52,10 +50,11 @@
         };
         debugger;
         $.ajax({
-            type: "GET",
+            type: "POST",
             data: userInfo,
-            url: "User/Login",
+            url: "@Url.Action("Login", "User")",
             success: function (response) {
+                window.location.href = "/Forex/Index";
             },
             error: function (xhr, status, error) {
                 if (xhr.status == 404) {
