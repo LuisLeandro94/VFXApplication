@@ -4,6 +4,7 @@ namespace VFXFinancial.Models
 {
     public class AccountModel
     {
+        public string Id { get; set; }
         [Required(ErrorMessage = "ClientID is required")]
         public string? ClientID {  get; set; }
         [Required(ErrorMessage = "UserID is required")]

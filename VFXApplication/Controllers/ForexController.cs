@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VFXFinancial.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VFXFinancial.Controllers
 {
-    public class ForexController: Controller
+    [Authorize]
+    public class ForexController : Controller
     {
-        private readonly ForexRequestService _forexRequestService;
+        private readonly IForexRequestService _forexRequestService;
 
-        public ForexController(ForexRequestService forexRequestService)
+        public ForexController(IForexRequestService forexRequestService)
         {
             _forexRequestService = forexRequestService;
         }
-
-            public IActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }

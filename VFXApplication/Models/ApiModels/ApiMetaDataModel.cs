@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VFXFinancial.Models.ForexRequestModel
+namespace VFXApplication.Models.ApiModels
 {
-    public class MetaDataModel
+    public class ApiMetaDataModel
     {
         [JsonPropertyName("1. Information")]
         public string? Information { get; set; }

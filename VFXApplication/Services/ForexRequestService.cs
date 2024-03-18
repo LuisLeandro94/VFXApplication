@@ -1,9 +1,14 @@
 ﻿using System.Text.Json;
-using VFXFinancial.Models.ForexRequestModel;
+using VFXApplication.Models.ApiModels;
+using VFXApplication.Models.ForexRequestModel;
 
 namespace VFXFinancial.Services
 {
-    public class ForexRequestService
+    public interface IForexRequestService
+    {
+        Task<ForexModel> GetDailyPrices(string fromSymbol, string toSymbol);
+    }
+    public class ForexRequestService : IForexRequestService
     {
         private readonly HttpClientService _httpClientService;
 
@@ -12,8 +17,9 @@ namespace VFXFinancial.Services
             _httpClientService = httpClientService;
         }
 
-        public async Task<ForexRequestModel> GetDailyPrices(string fromSymbol, string toSymbol)
+        public async Task<ForexModel> GetDailyPrices(string fromSymbol, string toSymbol)
         {
+            ForexModel finalResult = new();
             var queryParameters = new Dictionary<string, string>
             {
                 {"function", "FX_DAILY" },
@@ -32,14 +38,30 @@ namespace VFXFinancial.Services
                 throw new Exception("Failed to retrieve data from AlphaVantage API.");
             }
 
-            var forexRequestModel = JsonSerializer.Deserialize<ForexRequestModel>(content);
+            var forexRequestModel = JsonSerializer.Deserialize<ApiForexRequestModel>(content);
 
             if (forexRequestModel == null)
             {
                 throw new Exception("Failed to deserialize response from AlphaVantage API.");
             }
 
-            return forexRequestModel;
+            finalResult.LastRefreshed = forexRequestModel?.MetaData?.LastRefreshed;
+
+            foreach(var item in forexRequestModel.DailyPrices)
+            {
+                DailyPricesModel forexListModel = new DailyPricesModel()
+                {
+                    Close = item.Value.Close,
+                    High = item.Value.High,
+                    Low = item.Value.Low,
+                    Open = item.Value.Open,
+                    Date = item.Key
+                };
+
+                finalResult?.DailyPrices?.Add(forexListModel);
+            }
+
+            return finalResult;
         }
     }
 }
