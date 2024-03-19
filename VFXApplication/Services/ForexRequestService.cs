@@ -19,49 +19,52 @@ namespace VFXFinancial.Services
 
         public async Task<ForexModel> GetDailyPrices(string fromSymbol, string toSymbol)
         {
-            ForexModel finalResult = new();
-            var queryParameters = new Dictionary<string, string>
+            try
+            {
+                var queryParameters = new Dictionary<string, string>
             {
                 {"function", "FX_DAILY" },
                 {"from_symbol", fromSymbol },
                 {"to_symbol", toSymbol },
                 {"apikey", "2Z6ULSTQ7WESLB5C" },
             };
+                var queryString = string.Join("&", queryParameters.Select(x => $"{x.Key}={x.Value}"));
 
-            var queryString = string.Join("&", queryParameters.Select(x => $"{x.Key}={x.Value}"));
+                var url = $"https://www.alphavantage.co/query?{queryString}";
+                var content = await _httpClientService.GetAsync(url);
 
-            var url = $"https://www.alphavantage.co/query?{queryString}";
-            var content = await _httpClientService.GetAsync(url);
-
-            if (content == null)
-            {
-                throw new Exception("Failed to retrieve data from AlphaVantage API.");
-            }
-
-            var forexRequestModel = JsonSerializer.Deserialize<ApiForexRequestModel>(content);
-
-            if (forexRequestModel == null)
-            {
-                throw new Exception("Failed to deserialize response from AlphaVantage API.");
-            }
-
-            finalResult.LastRefreshed = forexRequestModel?.MetaData?.LastRefreshed;
-
-            foreach(var item in forexRequestModel.DailyPrices)
-            {
-                DailyPricesModel forexListModel = new DailyPricesModel()
+                if (string.IsNullOrEmpty(content))
                 {
-                    Close = item.Value.Close,
-                    High = item.Value.High,
-                    Low = item.Value.Low,
-                    Open = item.Value.Open,
-                    Date = item.Key
+                    throw new Exception("Failed to retrieve data from AlphaVantage API.");
+                }
+
+                var forexRequestModel = JsonSerializer.Deserialize<ApiForexRequestModel>(content);
+
+                if (forexRequestModel == null || forexRequestModel.DailyPrices == null)
+                {
+                    throw new Exception("Failed to deserialize response from AlphaVantage API.");
+                }
+
+                var result = new ForexModel
+                {
+                    LastRefreshed = forexRequestModel.MetaData?.LastRefreshed,
+                    DailyPrices = forexRequestModel.DailyPrices.Select(item => new DailyPricesModel
+                    {
+                        Close = item.Value.Close,
+                        High = item.Value.High,
+                        Low = item.Value.Low,
+                        Open = item.Value.Open,
+                        Date = item.Key
+                    }).ToList()
                 };
 
-                finalResult?.DailyPrices?.Add(forexListModel);
+                return result;
             }
-
-            return finalResult;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while fetching daily prices: {ex.Message}");
+                throw;
+            }
         }
     }
 }

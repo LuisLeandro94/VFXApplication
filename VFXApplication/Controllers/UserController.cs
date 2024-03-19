@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using VFXApplication.Services;
 using VFXFinancial.Services;
+using VFXFinancial.Models;
 
 namespace VFXApplication.Controllers
 {
@@ -28,28 +29,26 @@ namespace VFXApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string clientId, string userId, string password)
+        public async Task<IActionResult> Login(AccountModel account)
         {
-
-            var user = await _userService.ValidateUserAsync(_context, clientId, userId, password);
-
-            if (user != null)
+            if (!ModelState.IsValid)
             {
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.Name, user.UserID)
-                };
-
-                var identity = new ClaimsIdentity(claims, "login");
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(principal);
-
-                return RedirectToAction("Index", "Forex");
+                // If model validation fails, return the view with validation errors
+                return View(account);
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View();
+            var (principal, errorMessage) = await _userService.LoginAsync(_context, account.ClientID, account.UserID, account.Password);
+            if (principal != null)
+            {
+                await HttpContext.SignInAsync(principal);
+                return Json(new { redirectUrl = Url.Action("Index", "Forex") });
+            }
+
+            // If login fails, add model-level error message
+            ModelState.AddModelError(string.Empty, errorMessage);
+
+            // Return the view with model containing errors
+            return View(account);
         }
 
         [HttpPost]

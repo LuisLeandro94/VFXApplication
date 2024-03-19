@@ -19,13 +19,19 @@ namespace VFXFinancial.Controllers
             return View();
         }
 
-        //
-        // Url: /Forex/GetDailyPrices
         [HttpGet]
-        public async Task<JsonResult> GetDailyPrices(string from_symbol, string to_symbol)
+        public async Task<IActionResult> GetDailyPrices(string from_symbol, string to_symbol)
         {
-            var forexRequestModel = await _forexRequestService.GetDailyPrices(from_symbol, to_symbol);
-            return Json(forexRequestModel);
+            try
+            {
+                var forexRequestModel = await _forexRequestService.GetDailyPrices(from_symbol, to_symbol);
+                return Json(forexRequestModel);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error ocurred while fetching daily prices: {ex.Message}");
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
         }
     }
 }
