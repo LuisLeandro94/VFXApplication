@@ -15,9 +15,12 @@
                 <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">
                     <object style="width: 100px; pointer-events: none;" type="image/svg+xml" data="~/logo-white.svg"></object>
                 </a>
-                <form id="logoutForm" asp-controller="User" asp-action="Logout" method="post">
-                    <button type="submit" style="background-color: transparent; border: none; color: white;">Logout</button>
-                </form>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form id="logoutForm" asp-controller="User" asp-action="Logout" method="post">
+                        <button type="submit" style="background-color: transparent; border: none; color: white;">Logout</button>
+                    </form>
+                }
             </div>
         </nav>
     </header>
