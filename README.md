@@ -53,6 +53,11 @@ The project structure is as follows:
 - **Controllers:** Contains controllers classes that handle incoming requests.
 - **Models:** Contains model classes that represent data in the application.
 - **Views:** Contains view files (Razor files) that define the user interface of the application.
+- **Services:** Contains service classes that handle various application logic.
 - **wwwroot:** Contains static files such as CSS, Javascript and images.
-- **Program.cs:** Configures the request pipeline.
-- **DependencyInjection.cs:** Configures the services. Is then injected into **Program.cs**.
+- **Program.cs:** Configures services and the request pipeline.
+- **DependencyInjection.cs:** Contains service registration logic using ASP.NET Core's built-in dependency injection.
+
+## License
+
+This project is licensed under the MIT License. See the -[License](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt) file for details.
