@@ -4,7 +4,7 @@ This project is built with ASP.NET Core MVC
 ## Prerequisites
 Before running this project, ensure that you have the following installed:
 
--[.NET Core SDK](https://dotnet.microsoft.com/download)
+[.NET Core SDK](https://dotnet.microsoft.com/download)
 
 ## Getting Started
 
