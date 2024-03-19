@@ -29,6 +29,7 @@ namespace VFXApplication
             services.AddControllersWithViews()
                     .AddRazorRuntimeCompilation();
 
+            services.AddLogging();
             services.AddMvc();
 
             return services;

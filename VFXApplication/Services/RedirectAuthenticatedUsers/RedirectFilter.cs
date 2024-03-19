@@ -8,9 +8,19 @@ namespace VFXApplication.Services
 	{
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.HttpContext.User.Identity.IsAuthenticated && (context.HttpContext.Request.Path == "/User/Login" || context.HttpContext.Request.Path == "/"))
+            // Checking if HttpContext and User aren't null
+            if (context.HttpContext != null && context.HttpContext.User != null)
             {
-                context.Result = new RedirectResult("/Forex/Index"); // Redirect authenticated users away from the login page
+                // Checking if the user is authenticated and Identity isn't null
+                if (context.HttpContext.User.Identity != null && context.HttpContext.User.Identity.IsAuthenticated)
+                {
+                    // Checking if the request path is the login page or the root URL
+                    if (context.HttpContext.Request.Path == "/User/Login" || context.HttpContext.Request.Path == "/")
+                    {
+                        // Redirect authenticated users away from the login page
+                        context.Result = new RedirectResult("/Forex/Index");
+                    }
+                }
             }
         }
 

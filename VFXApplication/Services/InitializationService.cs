@@ -16,8 +16,9 @@ namespace VFXApplication.Services
             using (var scope = _scopeFactory.CreateScope())
             {
                 var apiContext = scope.ServiceProvider.GetRequiredService<ApiContext>();
-                // Seeding users
-                UserService.AddTestData(apiContext);
+                // Seeding users.
+                // Here we are using Task.Run since AddTestData is synchronous and doesn't need to be async
+                await Task.Run(() => UserService.AddTestData(apiContext));
             }
         }
 

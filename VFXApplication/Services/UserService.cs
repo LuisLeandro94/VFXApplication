@@ -87,8 +87,11 @@ namespace VFXApplication.Services
                     var identity = new ClaimsIdentity(claims, "login");
                     return (new ClaimsPrincipal(identity), null);
                 }
+                else
+                {
+                    return (null, "Invalid credentials.");
 
-                return (null, "Invalid login attempt.");
+                }
             }
             catch (Exception ex)
             {
